@@ -1,14 +1,7 @@
 local bump = require 'libs.bump'
+local player = require 'player'
 
-world = nil -- storage place for bump
-
-player = { 
-    x = 10, 
-    y =  10, xVelocity = 0, 
-    yVelocity = 0, 
-    gravity = 120, 
-    friction = 20
-}
+world = nil
 
 ground_0 = {}
 ground_1 = {}
@@ -26,47 +19,17 @@ end
 
 function love.update(dt)
 
-    if love.keyboard.isDown("right") then
-        player.xVelocity = 10;
-    end
-
-    if love.keyboard.isDown("left") then
-        player.xVelocity = -10;
-    end
-
-    if love.keyboard.isDown("up") then
-        player.yVelocity = -20;
-    end
-
-    print("asd")
-
-    player.yVelocity = player.yVelocity * (1 - math.min(dt * player.friction, 1))
-    player.xVelocity = player.xVelocity * (1 - math.min(dt * player.friction, 1))
-
-    player.yVelocity = player.yVelocity + player.gravity * dt
-
-    local goalX = player.x + player.xVelocity
-    local goalY = player.y + player.yVelocity
-
-    player.x, player.y, collisions = world:move(player, goalX, goalY)
+    player:update(dt);
 
     
 end
 
 function love.draw()
 
-
-
-    
-
     love.graphics.print('Hello World!', 400, 300)
 
-    love.graphics.rectangle('fill', world:getRect(player))
+    player:draw();
 
     love.graphics.rectangle('fill', world:getRect(ground_0))
     love.graphics.rectangle('fill', world:getRect(ground_1))
-
-    
-
-    
 end
