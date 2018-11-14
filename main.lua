@@ -6,6 +6,8 @@ world = nil
 ground_0 = {}
 ground_1 = {}
 
+local img = love.graphics.newImage("Paper.Spelsylt.1.png")
+
 function love.load()
     love.window.setMode(1024, 768)
 
@@ -13,8 +15,8 @@ function love.load()
 
     world:add(player, 10, 10, 16, 16)
 
-    world:add(ground_0, 120, 360, 640, 16)
-    world:add(ground_1, 0, 448, 640, 32)
+    world:add(ground_0, 120, 700, 640, 16)
+    world:add(ground_1, 0, 752, 1024, 16)
 end
 
 function love.update(dt)
@@ -25,11 +27,13 @@ function love.update(dt)
 end
 
 function love.draw()
+    love.graphics.setColor(255, 255, 255, 1)
 
-    love.graphics.print('Hello World!', 400, 300)
+    love.graphics.draw(img, 0, 0)
 
     player:draw();
 
+    love.graphics.setColor(0,0,0, 0.8)
     love.graphics.rectangle('fill', world:getRect(ground_0))
     love.graphics.rectangle('fill', world:getRect(ground_1))
 end
