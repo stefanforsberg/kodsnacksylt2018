@@ -6,6 +6,7 @@ world = nil
 
 ground_0 = {}
 ground_1 = {}
+enteties = {}
 
 local img = love.graphics.newImage("Paper.Spelsylt.1.png")
 

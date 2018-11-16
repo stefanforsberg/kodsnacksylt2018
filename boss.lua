@@ -46,7 +46,7 @@ function boss:draw()
 end
 
 boss.filter = function(item, other)
-    print(other.name)
+    
     -- local x, y, w, h = world:getRect(other)
     -- local bossx, bossy, bossw, bossh = world:getRect(item)
     -- local playerBottom = py + ph

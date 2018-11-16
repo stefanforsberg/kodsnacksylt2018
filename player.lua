@@ -12,9 +12,11 @@ local player = {
 
 function player:update(dt) 
 
-    if(love.keyboard.isDown("a")) then
-        table.insert(self.bullets, bullet(self.x, self.y, 1, 0))
-    end
+    function love.keypressed( key )
+        if key == "d" then
+            table.insert(self.bullets, bullet:create(self.x, self.y, 10, 0))
+        end
+     end
 
     if love.keyboard.isDown("right") then
         self.xVelocity = 8;
@@ -55,6 +57,10 @@ function player:update(dt)
         end
     end
 
+    for i, bullet in ipairs(self.bullets) do
+        bullet:update();
+    end
+
 
 end
 
@@ -76,6 +82,13 @@ function player:draw()
         love.graphics.rectangle('fill', world:getRect(bullet))
     end
     
+    for i=#self.bullets,1,-1 do 
+        local v = self.bullets[i] 
+        if not v.isAlive then 
+            world:remove(v)
+            table.remove(self.bullets, i) 
+        end 
+    end 
 end
 
 player.filter = function(item, other)
@@ -95,10 +108,49 @@ player.filter = function(item, other)
     end
 end
 
-function bullet(x,y, vx, vy)
-    local b = { x = x, y = y, name = "playerBullet"}
+bullet = {};
+bullet.__index = bullet
+
+function bullet:create(x,y, vx, vy)
+    local b = { x = x, y = y, vx = vx, vy = vy, name = "playerBullet", isAlive = true}
     world:add(b, b.x, b.y, 8, 8)
+    
+    function b:update()
+        local goalX = self.x + self.vx;
+        local goalY = self.y + self.vy;
+        self.x, self.y, collisions = world:move(self, goalX, goalY, self.filter)
+
+        if self.x < 0 or self.x > 1032 then
+            b.isAlive = false
+        end
+
+        for i, bullet in ipairs(collisions) do
+            b.isAlive = false
+        end
+    end
+
+    function b:filter(other)
+        if other.name == "player" or other.name == "playerBullet" then
+            return nil;
+        end
+
+        return "touch";
+    end
+    
     return b;
+
+
+end
+
+-- function bullet:update()
+--     local goalX = self.x + self.vx;
+--     local goalY = self.y + self.vy;
+--     self.x, self.y = world:move(self, goalX, goalY)
+-- end
+
+function bulletUpdate() 
+    -- self.x, self.y, collisions = world:move(self, goalX, goalY, self.filter)
+    
 end
 
 return player;
