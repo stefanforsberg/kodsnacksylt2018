@@ -7,17 +7,23 @@ function things:add(item)
 end
 
 function things:update(dt)
+    
+     
     for i, item in ipairs(self.items) do
-        item:update()
+        if item.update ~= nil then
+            item:update()
+        end
     end
 
     for i=#self.items,1,-1 do 
         local v = self.items[i] 
-        if not v.isAlive then 
+        if v.remove then 
             world:remove(v)
             table.remove(self.items, i) 
         end 
-    end 
+    end         
+    
+
 end
 
 function things:draw()

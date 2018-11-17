@@ -2,7 +2,7 @@ local bump = require 'libs.bump'
 local player = require 'player'
 local boss = require 'boss'
 local things = require 'things'
-
+local platforms = require 'platforms'
 world = nil
 
 ground_0 = {}
@@ -18,8 +18,7 @@ function love.load()
 
     world:add(player, 10, 10, 32, 32)
 
-    world:add(ground_0, 120, 640, 640, 32)
-    world:add(ground_1, 0, 736, 1024, 32)
+    platforms:load()
 
     boss:init();
 end
@@ -37,12 +36,10 @@ function love.draw()
 
     love.graphics.draw(img, 0, 0)
 
+    love.graphics.setColor(0, 0, 0, 0.5)
+    things:draw(dt)
+    
     boss:draw();
     player:draw();
-    
-    things:draw(dt)
 
-    love.graphics.setColor(0,0,0, 0.8)
-    love.graphics.rectangle('fill', world:getRect(ground_0))
-    love.graphics.rectangle('fill', world:getRect(ground_1))
 end

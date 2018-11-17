@@ -3,20 +3,28 @@ local player = {
     y =  10, 
     xVelocity = 0, 
     yVelocity = 0, 
-    gravity = 120, 
+    gravity = 190, 
     friction = 20,
     jumping = false,
     name='player',
-    -- bullets = {}
 }
 
 function player:update(dt) 
 
     function love.keypressed(key)
+        print(key)
         if key == "d" then
-            things:add(bullet:create(self.x, self.y, 10, 0))
+            things:add(bullet:create(self.x+12, self.y+12, 10, 0))
         elseif key == "w" then
-            things:add(bullet:create(self.x, self.y, 0, -10))
+            things:add(bullet:create(self.x+12, self.y+12, 0, -10))
+        end
+
+        if key == "up" then
+            if(not self.jumping) then
+                self.jumping = true;
+                self.yVelocity = -110;
+                
+            end
         end
      end
 
@@ -28,15 +36,6 @@ function player:update(dt)
         self.xVelocity = -8;
     end
 
-    if love.keyboard.isDown("up") then
-        if(not self.jumping) then
-            self.jumping = true;
-            self.yVelocity = -90;
-            
-        end
-
-        
-    end
 
     self.yVelocity = self.yVelocity * (1 - math.min(dt * self.friction, 1))
     self.xVelocity = self.xVelocity * (1 - math.min(dt * self.friction, 1))
@@ -58,12 +57,6 @@ function player:update(dt)
         self.yVelocity = 0
         end
     end
-
-    -- for i, bullet in ipairs(self.bullets) do
-    --     bullet:update();
-    -- end
-
-
 end
 
 function player:draw()
@@ -102,7 +95,7 @@ bullet = {};
 bullet.__index = bullet
 
 function bullet:create(x,y, vx, vy)
-    local b = { x = x, y = y, vx = vx, vy = vy, name = "playerBullet", isAlive = true}
+    local b = { x = x, y = y, vx = vx, vy = vy, name = "playerBullet"}
     world:add(b, b.x, b.y, 8, 8)
     
     function b:update()
@@ -110,16 +103,8 @@ function bullet:create(x,y, vx, vy)
         local goalY = self.y + self.vy;
         self.x, self.y, collisions = world:move(self, goalX, goalY, self.filter)
 
-        if self.x < 0 or self.x > 1032 then
-            b.isAlive = false
-        end
-
-        if self.y < 0 or self.y > 776 then
-            b.isAlive = false
-        end
-
         for i, bullet in ipairs(collisions) do
-            b.isAlive = false
+            b.remove = true
         end
     end
 
