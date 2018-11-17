@@ -1,12 +1,12 @@
 local bump = require 'libs.bump'
 local player = require 'player'
 local boss = require 'boss'
+local things = require 'things'
 
 world = nil
 
 ground_0 = {}
 ground_1 = {}
-enteties = {}
 
 local img = love.graphics.newImage("Paper.Spelsylt.1.png")
 
@@ -29,7 +29,7 @@ function love.update(dt)
     boss:update(dt)
     player:update(dt)
 
-    
+    things:update(dt)
 end
 
 function love.draw()
@@ -39,6 +39,8 @@ function love.draw()
 
     boss:draw();
     player:draw();
+    
+    things:draw(dt)
 
     love.graphics.setColor(0,0,0, 0.8)
     love.graphics.rectangle('fill', world:getRect(ground_0))

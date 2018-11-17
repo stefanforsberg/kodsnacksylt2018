@@ -7,14 +7,16 @@ local player = {
     friction = 20,
     jumping = false,
     name='player',
-    bullets = {}
+    -- bullets = {}
 }
 
 function player:update(dt) 
 
-    function love.keypressed( key )
+    function love.keypressed(key)
         if key == "d" then
-            table.insert(self.bullets, bullet:create(self.x, self.y, 10, 0))
+            things:add(bullet:create(self.x, self.y, 10, 0))
+        elseif key == "w" then
+            things:add(bullet:create(self.x, self.y, 0, -10))
         end
      end
 
@@ -57,9 +59,9 @@ function player:update(dt)
         end
     end
 
-    for i, bullet in ipairs(self.bullets) do
-        bullet:update();
-    end
+    -- for i, bullet in ipairs(self.bullets) do
+    --     bullet:update();
+    -- end
 
 
 end
@@ -77,18 +79,6 @@ function player:draw()
     love.graphics.line(x+w, y, x+w,y+h)
     love.graphics.line(x+w, y+h, x,y+h)
     love.graphics.line(x, y+h, x,y)
-
-    for i, bullet in ipairs(self.bullets) do
-        love.graphics.rectangle('fill', world:getRect(bullet))
-    end
-    
-    for i=#self.bullets,1,-1 do 
-        local v = self.bullets[i] 
-        if not v.isAlive then 
-            world:remove(v)
-            table.remove(self.bullets, i) 
-        end 
-    end 
 end
 
 player.filter = function(item, other)
@@ -124,9 +114,17 @@ function bullet:create(x,y, vx, vy)
             b.isAlive = false
         end
 
+        if self.y < 0 or self.y > 776 then
+            b.isAlive = false
+        end
+
         for i, bullet in ipairs(collisions) do
             b.isAlive = false
         end
+    end
+
+    function b:draw()
+        love.graphics.rectangle('fill', world:getRect(self))
     end
 
     function b:filter(other)
@@ -140,17 +138,6 @@ function bullet:create(x,y, vx, vy)
     return b;
 
 
-end
-
--- function bullet:update()
---     local goalX = self.x + self.vx;
---     local goalY = self.y + self.vy;
---     self.x, self.y = world:move(self, goalX, goalY)
--- end
-
-function bulletUpdate() 
-    -- self.x, self.y, collisions = world:move(self, goalX, goalY, self.filter)
-    
 end
 
 return player;
