@@ -6,11 +6,11 @@ function platforms:load()
     things:add(platform:create(1024, 0, 1, 768))
     things:add(platform:create(-1, -1, 1, 768))
 
-    things:add(platform:create(0, 768-32, 1024, 32))
+    things:add(platform:create(0, 768, 1024, 1))
 
-    things:add(platform:create(32*10, 768-32*5, 1024-32*20, 32))
+    things:add(platform:create(32*10, 768-32*4, 1024-32*20, 16))
 
-    things:add(platform:create(32*5, 768-32*9, 32*5, 32))
+    things:add(platform:create(32*5, 768-32*8, 32*5, 16))
 end
 
 platform = {};

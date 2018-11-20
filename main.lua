@@ -1,14 +1,16 @@
 local bump = require 'libs.bump'
 local player = require 'player'
-local boss = require 'boss'
+boss = require 'boss'
 local things = require 'things'
 local platforms = require 'platforms'
 world = nil
 
+
+
 ground_0 = {}
 ground_1 = {}
 
-local img = love.graphics.newImage("Paper.Spelsylt.1.png")
+local img = love.graphics.newImage("Paper.Spelsylt.3.png")
 
 function love.load()
     love.window.setTitle("???")
@@ -25,10 +27,11 @@ end
 
 function love.update(dt)
 
+    
     boss:update(dt)
     player:update(dt)
-
     things:update(dt)
+    
 end
 
 function love.draw()
@@ -36,10 +39,11 @@ function love.draw()
 
     love.graphics.draw(img, 0, 0)
 
-    love.graphics.setColor(0, 0, 0, 0.5)
-    things:draw(dt)
+    love.graphics.setColor(0, 0, 0, 0.8)
+    
     
     boss:draw();
     player:draw();
+    things:draw()
 
 end
