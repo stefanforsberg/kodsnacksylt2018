@@ -13,7 +13,8 @@ function boss:init()
     self.img4 = love.graphics.newImage("boss04.png")
     self.health = 100
     self.hitThisCycle = false
-    self.b = false
+    self.shootTimer = 0
+    self.shootThreashold = 2ww
 
     world:add(self, self.x, self.y, 47, 32*4)
 end
@@ -27,7 +28,7 @@ function boss:update(dt)
     local goalX = self.x
     local goalY = self.y + self.yVelocity
 
-    self.x, self.y = world:move(self, goalX, goalY, filter)
+    self.x, self.y = world:move(self, goalX, goalY, self.filter)
 
     if(self.y >= self.yMax and self.yVelocity > 0) then
         self.yVelocity = -1 * self.yVelocity;
@@ -35,10 +36,13 @@ function boss:update(dt)
         self.yVelocity = -1 * self.yVelocity;
     end
 
-    if not self.b then
-        self.b = true
+    self.shootTimer = self.shootTimer + dt
+
+    if self.shootTimer > self.shootThreashold then
+        self.shootTimer = 0
         things:add(bossBullet:create(self.x-8, self.y+28, player.x, player.y))
     end
+
 end
 
 function boss:draw()
@@ -64,11 +68,11 @@ function boss:filter(other)
 end
 
 bossBullet = {};
-bossBullet.__index = bullet
+bossBullet.__index = bossBulletw
 
 function bossBullet:create(x, y, px, py)
-    local vx = (px-x)/200
-    local vy = (py-y)/200
+    local vx = (px-x)/100
+    local vy = (py-y)/100
     
     local b = { x = x, y = y, vx = vx, vy = vy, name = "bossBullet"}
     world:add(b, b.x, b.y, 8, 8)

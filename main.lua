@@ -16,7 +16,7 @@ function love.load()
     love.window.setTitle("???")
     love.window.setMode(1024, 768)
 
-    world = bump.newWorld(32)
+    world = bump.newWorld(8)
 
     things:init()
 
@@ -53,5 +53,7 @@ function love.draw()
     if player.health == 0 then
         love.load()
     end
+
+    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 30)
 
 end

@@ -149,8 +149,7 @@ function bullet:create(x,y, vx, vy)
         self.x, self.y, collisions = world:move(self, goalX, goalY, self.filter)
 
         for i, bullet in ipairs(collisions) do
-            boss:hit()
-            b.remove = true
+            print("hej")
         end
     end
 
@@ -160,12 +159,18 @@ function bullet:create(x,y, vx, vy)
 
     function b:filter(other)
 
-        if other.name == "player" or other.name == "playerBullet" or other.name == "platform" then
-            return nil;
+        if other.name == "boss" then
+            other:hit()
+            self.remove = true
         end
 
+        if other.name == "wall" then
+            self.remove = true
+        end
 
-        return "touch";
+        
+
+        return nil;
     end
     
     return b;
