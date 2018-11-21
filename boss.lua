@@ -14,7 +14,7 @@ function boss:init()
     self.health = 100
     self.hitThisCycle = false
     self.shootTimer = 0
-    self.shootThreashold = 2ww
+    self.shootThreashold = 2
 
     world:add(self, self.x, self.y, 47, 32*4)
 end
