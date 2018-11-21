@@ -1,9 +1,11 @@
-things = {
-    items = {}
-}
-local items = {}
+local things = {}
+
 function things:add(item)
     table.insert(self.items, item)
+end
+
+function things:init()
+    self.items = {}
 end
 
 function things:update(dt)

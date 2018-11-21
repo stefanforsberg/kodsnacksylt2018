@@ -1,25 +1,30 @@
-local player = {
-    x = 10, 
-    y =  10, 
-    xVelocity = 0, 
-    yVelocity = 0, 
-    gravity = 190, 
-    friction = 20,
-    jumping = false,
-    name='player',
-    animation = {
+local player = {}
+
+function player:init()
+    self.x = 10
+    self.y =  700
+    self.xVelocity = 0
+    self.yVelocity = 0
+    self.gravity = 190
+    self.friction = 20
+    self.jumping = false
+    self.name='player'
+    self.animation = {
         currentTime = 0,
         sprite = 1,
         img = 1,
         rotation = 1,
         translate = 0
-    },
-    img1 = love.graphics.newImage("p01.png"),
-    img2 = love.graphics.newImage("p02.png"),
-    img3 = love.graphics.newImage("p01.png"),
-    img4 = love.graphics.newImage("p04.png"),
-    imgAir = love.graphics.newImage("pair.png")
-}
+    }
+    self.img1 = love.graphics.newImage("p01.png")
+    self.img2 = love.graphics.newImage("p02.png")
+    self.img3 = love.graphics.newImage("p01.png")
+    self.img4 = love.graphics.newImage("p04.png")
+    self.imgAir = love.graphics.newImage("pair.png")
+    self.health = 10
+
+    world:add(self, 10, 10, 64, 64)
+end
 
 function player:update(dt) 
 
@@ -40,11 +45,11 @@ function player:update(dt)
      end
 
     if love.keyboard.isDown("right") then
-        self.xVelocity = 10;
+        self.xVelocity = 8;
     end
 
     if love.keyboard.isDown("left") then
-        self.xVelocity = -10;
+        self.xVelocity = -8;
     end
 
 
@@ -73,6 +78,10 @@ function player:update(dt)
         end
     end
 
+    self:animate(dt)
+end
+
+function player:animate(dt)
     if self.yVelocity == 0 then
         if(self.xVelocity == 0) then
             self.animation.img = self.img1
@@ -83,14 +92,14 @@ function player:update(dt)
                 self.animation.translate = 0
             else
                 self.animation.rotation = -1
-                self.animation.translate = 32
+                self.animation.translate = 64
             end
 
             self.animation.img = self["img" .. self.animation.sprite]
 
             self.animation.currentTime = self.animation.currentTime + dt
     
-            if self.animation.currentTime > 0.2 then
+            if self.animation.currentTime > 0.1 then
                 self.animation.sprite = self.animation.sprite + 1
     
                 if self.animation.sprite > 4 then
@@ -112,23 +121,6 @@ function player:draw()
     love.graphics.setColor(255, 255, 255, 1)
     
     love.graphics.draw(self.animation.img, x, y, 0, self.animation.rotation, 1, self.animation.translate, 0)
-    -- if self.xVelocity > 0 then
-        
-    -- else
-    --     love.graphics.draw(self.animation.img, x, y, 0, 1, 1, width, 0)
-    -- end
-
-    
-    
-
-    -- love.graphics.rectangle('fill', world:getRect(player))
-    
-    -- love.graphics.setColor(0, 0, 0, 0.5)
-
-    -- love.graphics.line(x, y, x+w,y)
-    -- love.graphics.line(x+w, y, x+w,y+h)
-    -- love.graphics.line(x+w, y+h, x,y+h)
-    -- love.graphics.line(x, y+h, x,y)
 end
 
 player.filter = function(item, other)
@@ -136,16 +128,12 @@ player.filter = function(item, other)
         return nil;
     end
 
-    local x, y, w, h = world:getRect(other)
-    local px, py, pw, ph = world:getRect(item)
-    local playerBottom = py + ph
-    local otherBottom = y + h
-
-    if playerBottom <= y then
-        return 'slide'
-    else 
-        return 'slide'
+    if other.name == "boss" then
+        item.health = 0
+        return nil;
     end
+
+    return "slide"
 end
 
 bullet = {};

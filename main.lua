@@ -1,7 +1,7 @@
 local bump = require 'libs.bump'
-local player = require 'player'
+player = require 'player'
 boss = require 'boss'
-local things = require 'things'
+things = require 'things'
 local platforms = require 'platforms'
 world = nil
 
@@ -18,10 +18,12 @@ function love.load()
 
     world = bump.newWorld(32)
 
-    world:add(player, 10, 10, 32, 32)
+    things:init()
+
+    player:init()
 
     platforms:load()
-
+    
     boss:init();
 end
 
@@ -31,6 +33,8 @@ function love.update(dt)
     boss:update(dt)
     player:update(dt)
     things:update(dt)
+
+
     
 end
 
@@ -45,5 +49,9 @@ function love.draw()
     boss:draw();
     player:draw();
     things:draw()
+
+    if player.health == 0 then
+        love.load()
+    end
 
 end
