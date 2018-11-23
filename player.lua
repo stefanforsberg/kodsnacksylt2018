@@ -128,7 +128,7 @@ player.filter = function(item, other)
         return nil;
     end
 
-    if other.name == "boss" then
+    if other.name == "boss" or other.name == "bossFlame" then
         item.health = 0
         return nil;
     end

@@ -18,7 +18,7 @@ function boss:init()
     self.phace = {
         one = {
             shootThreashold = 2,
-            flameProbability = 0.2
+            flameProbability = 1
         }
     }
     self.currentPhace = self.phace["one"]
@@ -141,15 +141,13 @@ function bossFlame:create(x, y)
         else
             love.graphics.setColor(0,0,0, self.timer / 100)
             love.graphics.draw(self.img1, self.x, self.y)
-            love.graphics.setColor(255,255,255,100)
-            
+            love.graphics.setColor(255,255,255,1)
         end
     end
 
     function f:filter(other)
 
         if other.name == "player" then
-            --self.remove = true
             return "touch"
         end
         
@@ -161,8 +159,6 @@ end
 
 bossBullet = {};
 bossBullet.__index = bossBulletw
-
-
 
 function bossBullet:create(x, y, px, py)
     local vx = (px-x)/100
