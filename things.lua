@@ -13,7 +13,7 @@ function things:update(dt)
      
     for i, item in ipairs(self.items) do
         if item.update ~= nil then
-            item:update()
+            item:update(dt)
         end
     end
 
