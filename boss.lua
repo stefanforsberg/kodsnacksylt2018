@@ -4,8 +4,8 @@ function boss:init()
     self.x = 960
     self.y = 100
     self.yVelocity = 4
-    self.yMin = (32*3)
-    self.yMax = (768 - 32*7)
+    self.yMin = (32)
+    self.yMax = (768 - 32*4)
     self.name='boss'
     self.img1 = love.graphics.newImage("boss01.png")
     self.img2 = love.graphics.newImage("boss02.png")
@@ -41,8 +41,9 @@ function boss:update(dt)
     if self.ballTimer > self.currentPhace.ballThreashold then
         if love.math.random() < self.currentPhace.ballProbability then
             things:add(bossBall:create())
-            self.ballTimer = 0
         end
+
+        self.ballTimer = 0
     end
 
     if not self.hasFlame then
