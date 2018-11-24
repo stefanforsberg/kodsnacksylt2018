@@ -23,7 +23,7 @@ function boss:init()
             shootThreashold = 3,
             ballThreashold = 4,
             flameProbability = 0.1,
-            ballProbability = 0.3,
+            ballProbability = 1,
             hitDamage = 1,
             enemyHealth = 1,
             enemyThreashold = 5,
@@ -225,6 +225,7 @@ function bossBall:create()
 
         if other.name == "player" then
             self.remove = true
+            other:hit(60)
             return "touch"
         end
         
@@ -268,7 +269,7 @@ function bossBullet:create(x, y, px, py)
         if other.name == "player" then
             self.remove = true
             boss.b = false
-            player:hit()
+            player:hit(20)
             return "touch"
         end
         

@@ -5,15 +5,19 @@ things = require 'things'
 local platforms = require 'platforms'
 local enemies = require 'enemies'
 world = nil
-local gameState = "intro"
+gameState = "intro"
 
 local img = love.graphics.newImage("Paper.Spelsylt.3.png")
 local intro = love.graphics.newImage("intro.png")
 
+music = love.audio.newSource("spelsylt01.mp3", "stream")
+music:setLooping(true)
+music:play()
+
 function love.load()
     love.window.setTitle("you vs boss")
     love.window.setMode(1024, 768)
-    
+
     world = bump.newWorld(8)
 
     things:init()
@@ -37,6 +41,11 @@ function love.update(dt)
         player:update(dt)
         things:update(dt)
         enemies:update(dt);
+    elseif gameState == "death" then
+        function love.keypressed(key)
+            gameState = "game"
+            love.load()
+        end        
     end
 end
 
@@ -53,11 +62,15 @@ function love.draw()
         player:draw();
         things:draw()
 
-        if player.health == 0 then
-            love.load()
+        if player.health <= 0 then
+            print("death")
+            gameState = "death"
         end
 
         love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 30)
+
+    elseif gameState == "death" then
+        love.graphics.print("death")
     end 
 end
 

@@ -85,8 +85,8 @@ function player:update(dt)
     self:animate(dt)
 end
 
-function player:hit()
-    self.health = self.health - 20
+function player:hit(h)
+    self.health = self.health - h
 end
 
 function player:animate(dt)
