@@ -11,21 +11,48 @@ function boss:init()
     self.img2 = love.graphics.newImage("boss02.png")
     self.img3 = love.graphics.newImage("boss03.png")
     self.img4 = love.graphics.newImage("boss04.png")
+    self.currentImg = self.img1;
     self.health = 100
     self.hitThisCycle = false
     self.shootTimer = 0
     self.ballTimer = 0
     self.shootThreashold = 2
-    self.phace = {
+    self.phase = {
         one = {
             name = "one",
-            shootThreashold = 2,
+            shootThreashold = 3,
             ballThreashold = 4,
             flameProbability = 0.1,
-            ballProbability = 0.1
+            ballProbability = 0.3,
+            hitDamage = 1,
+            enemyHealth = 1,
+            enemyThreashold = 5,
+            healthColor = {r = 1, g = 223/255, b = 216/255}
+        },
+        two = {
+            name = "two",
+            shootThreashold = 2,
+            ballThreashold = 3,
+            flameProbability = 0.3,
+            ballProbability = 0.4,
+            hitDamage = 1,
+            enemyHealth = 3,
+            enemyThreashold = 4,
+            healthColor = {r = 1, g = 157/255, b = 135/255}
+        },
+        three = {
+            name = "three",
+            shootThreashold = 1,
+            ballThreashold = 2,
+            flameProbability = 0.4,
+            ballProbability = 0.7,
+            hitDamage = 0.5,
+            enemyHealth = 5,
+            enemyThreashold = 3,
+            healthColor = {r = 1, g = 113/255, b = 81/255}
         }
     }
-    self.currentPhace = self.phace["one"]
+    self.currentPhase = self.phase["one"]
     self.hasFlame = false
     
 
@@ -38,8 +65,8 @@ end
 
 function boss:update(dt) 
 
-    if self.ballTimer > self.currentPhace.ballThreashold then
-        if love.math.random() < self.currentPhace.ballProbability then
+    if self.ballTimer > self.currentPhase.ballThreashold then
+        if love.math.random() < self.currentPhase.ballProbability then
             things:add(bossBall:create())
         end
 
@@ -47,6 +74,8 @@ function boss:update(dt)
     end
 
     if not self.hasFlame then
+
+        self.shootTimer = self.shootTimer + dt
 
         local goalX = self.x
         local goalY = self.y + self.yVelocity
@@ -59,23 +88,22 @@ function boss:update(dt)
             self.yVelocity = -1 * self.yVelocity;
         end
 
-        if self.shootTimer > self.currentPhace.shootThreashold then
+        if self.shootTimer > self.currentPhase.shootThreashold then
         
-            if love.math.random() < self.currentPhace.flameProbability then
+            if love.math.random() < self.currentPhase.flameProbability then
                 things:add(bossFlame:create(10, self.y-32))
                 self.hasFlame = true
+                self.currentImg = self.img2
             else
                 things:add(bossBullet:create(self.x-8, self.y+28, player.x+12, player.y+12))
             end
 
             self.shootTimer = 0
-            
         end
-
-        
     end
+
     self.ballTimer = self.ballTimer + dt
-    self.shootTimer = self.shootTimer + dt
+    
 end
 
 function boss:draw()
@@ -84,15 +112,23 @@ function boss:draw()
     
     love.graphics.setColor(255, 255, 255, 1)
 
-    love.graphics.draw(self.img1, x, y)
+    love.graphics.draw(self.currentImg, x, y)
     
-    love.graphics.setColor(255, 255, 255, 1)
-
-    love.graphics.rectangle('fill', 10, 10, 10*self.health, 10)
+    love.graphics.setColor(self.currentPhase.healthColor.r, self.currentPhase.healthColor.g, self.currentPhase.healthColor.b, 1)
+    love.graphics.rectangle('fill', 10, 10, 10*self.health, 8)
+    love.graphics.setColor(1, 0.27, 0.1, 0.5)
+    outline(10, 10, 1000, 8)
 
     if self.hitThisCycle then
-        self.health = self.health - 0.1
+        self.health = self.health - self.currentPhase.hitDamage
         self.hitThisCycle = false
+        if(self.health < 75 and self.currentPhase.name == "one") then
+            self.currentPhase = self.phase["two"]
+        end
+
+        if(self.health == 50 and self.currentPhase.name == "two") then
+            self.currentPhase = self.phase["three"]
+        end
     end
 end
 
@@ -110,12 +146,13 @@ function bossFlame:create(x, y)
     f.img2 = love.graphics.newImage("flame02.png")
     f.img3 = love.graphics.newImage("flame03.png")
 
+    world:add(f, f.x, f.y, 933, 178)
+
     function f:update(dt)
         self.timer = self.timer + 1
         
         if self.timer == 100 then
             self.added = true
-            world:add(f, f.x, f.y, 933, 178)
         end
 
         if not self.added then
@@ -140,6 +177,7 @@ function bossFlame:create(x, y)
         
         if self.timer > 200 then
             boss.hasFlame = false
+            boss.currentImg = boss.img1
             self.remove = true
         end
     end
@@ -147,7 +185,6 @@ function bossFlame:create(x, y)
     function f:draw()
         if self.added then
             love.graphics.draw(self.animation.img, self.x, self.y-20)
-            
         else
             love.graphics.setColor(0,0,0, self.timer / 100)
             love.graphics.draw(self.img1, self.x, self.y-20)
@@ -156,11 +193,6 @@ function bossFlame:create(x, y)
     end
 
     function f:filter(other)
-
-        if other.name == "player" then
-            return "touch"
-        end
-        
         return nil;
     end
     
@@ -236,6 +268,7 @@ function bossBullet:create(x, y, px, py)
         if other.name == "player" then
             self.remove = true
             boss.b = false
+            player:hit()
             return "touch"
         end
         
