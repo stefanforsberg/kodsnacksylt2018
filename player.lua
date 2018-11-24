@@ -30,26 +30,26 @@ function player:update(dt)
 
     function love.keypressed(key)
         if key == "d" then
-            things:add(bullet:create(self.x+12, self.y+12, 10, 0))
+            things:add(bullet:create(self.x+24, self.y+24, 10, 0))
         elseif key == "w" then
-            things:add(bullet:create(self.x+12, self.y+12, 0, -10))
+            things:add(bullet:create(self.x+24, self.y+24, 0, -10))
         end
 
         if key == "up" then
             if(not self.jumping) then
                 self.jumping = true;
-                self.yVelocity = -110;
+                self.yVelocity = -120;
                 
             end
         end
      end
 
     if love.keyboard.isDown("right") then
-        self.xVelocity = 8;
+        self.xVelocity = 9;
     end
 
     if love.keyboard.isDown("left") then
-        self.xVelocity = -8;
+        self.xVelocity = -9;
     end
 
 
@@ -136,12 +136,14 @@ player.filter = function(item, other)
     return "slide"
 end
 
-bullet = {};
+bullet = {
+    img = love.graphics.newImage("pShot.png")
+};
 bullet.__index = bullet
 
 function bullet:create(x,y, vx, vy)
-    local b = { x = x, y = y, vx = vx, vy = vy, name = "playerBullet"}
-    world:add(b, b.x, b.y, 8, 8)
+    local b = { x = x, y = y, vx = vx, vy = vy, name = "playerBullet", img = bullet.img}
+    world:add(b, b.x, b.y, 16, 16)
     
     function b:update()
         local goalX = self.x + self.vx;
@@ -154,7 +156,7 @@ function bullet:create(x,y, vx, vy)
     end
 
     function b:draw()
-        love.graphics.rectangle('fill', world:getRect(self))
+        love.graphics.draw(self.img, self.x, self.y)
     end
 
     function b:filter(other)

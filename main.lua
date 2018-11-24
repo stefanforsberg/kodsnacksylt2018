@@ -58,3 +58,10 @@ function love.draw()
         love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 30)
     end 
 end
+
+function outline(x, y, w, h)
+    love.graphics.line(x, y, x+w, y)
+    love.graphics.line(x+w, y, x+w, y+h)
+    love.graphics.line(x+w, y+h, x, y+h)
+    love.graphics.line(x, y+h, x, y)
+end

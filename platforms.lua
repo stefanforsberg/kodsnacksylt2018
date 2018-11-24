@@ -9,7 +9,15 @@ function platforms:load()
 
     things:add(platform:create(32*10, 768-32*4, 1024-32*20, 16, "platform"))
 
-    things:add(platform:create(32*5, 768-32*8, 32*5, 16, "platform"))
+    things:add(platform:create(32*3, 768-32*8, 32*5, 16, "platform"))
+    things:add(platform:create(1024-32*8, 768-32*8, 32*5, 16, "platform"))
+
+    things:add(platform:create(32*10, 768-32*12, 1024-32*20, 16, "platform"))
+
+    things:add(platform:create(32*3, 768-32*16, 32*5, 16, "platform"))
+    things:add(platform:create(1024-32*8, 768-32*16, 32*5, 16, "platform"))
+
+    things:add(platform:create(32*10, 768-32*20, 1024-32*20, 16, "platform"))
 end
 
 platform = {};
@@ -20,7 +28,10 @@ function platform:create(x, y, w, h, name)
     world:add(p, p.x, p.y, p.w, p.h)
 
     function p:draw()
+        outline(self.x, self.y, self.w, self.h)
+        love.graphics.setColor(255,255,255,0.3)
         love.graphics.rectangle('fill', world:getRect(self))
+        love.graphics.setColor(255,255,255,1)
     end
 
     return p;

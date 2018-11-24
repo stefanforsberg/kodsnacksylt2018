@@ -14,12 +14,15 @@ function boss:init()
     self.health = 100
     self.hitThisCycle = false
     self.shootTimer = 0
+    self.ballTimer = 0
     self.shootThreashold = 2
     self.phace = {
         one = {
             name = "one",
             shootThreashold = 2,
-            flameProbability = 1
+            ballThreashold = 4,
+            flameProbability = 0.1,
+            ballProbability = 0.1
         }
     }
     self.currentPhace = self.phace["one"]
@@ -34,7 +37,14 @@ function boss:hit()
 end
 
 function boss:update(dt) 
-    
+
+    if self.ballTimer > self.currentPhace.ballThreashold then
+        if love.math.random() < self.currentPhace.ballProbability then
+            things:add(bossBall:create())
+            self.ballTimer = 0
+        end
+    end
+
     if not self.hasFlame then
 
         local goalX = self.x
@@ -61,8 +71,10 @@ function boss:update(dt)
             
         end
 
-        self.shootTimer = self.shootTimer + dt
+        
     end
+    self.ballTimer = self.ballTimer + dt
+    self.shootTimer = self.shootTimer + dt
 end
 
 function boss:draw()
@@ -87,16 +99,12 @@ function boss:filter(other)
     return nil;
 end
 
-bossFlame = {
-    
-};
-
+bossFlame = {};
 bossFlame.__index = bossFlame
 
 function bossFlame:create(x, y)
     local f = { x = x, y = y, name = "bossFlame", timer = 0, animation = {sprite = 1, timer = 0, img = 1}}
     
-
     f.img1 = love.graphics.newImage("flame01.png")
     f.img2 = love.graphics.newImage("flame02.png")
     f.img3 = love.graphics.newImage("flame03.png")
@@ -128,9 +136,8 @@ function bossFlame:create(x, y)
         self.animation.img = self["img" .. self.animation.sprite]
 
         self.x, self.y, collisions = world:move(self, self.x, self.y, self.filter)
-
         
-        if self.timer > 300 then
+        if self.timer > 200 then
             boss.hasFlame = false
             self.remove = true
         end
@@ -138,7 +145,6 @@ function bossFlame:create(x, y)
 
     function f:draw()
         if self.added then
-            love.graphics.rectangle('fill', world:getRect(self))
             love.graphics.draw(self.animation.img, self.x, self.y-20)
             
         else
@@ -160,14 +166,51 @@ function bossFlame:create(x, y)
     return f;
 end
 
-bossBullet = {};
-bossBullet.__index = bossBulletw
+bossBall = {
+    img = love.graphics.newImage("bBall.png")
+}
+bossBall.__index = bossBall
+
+function bossBall:create()
+    local x = 192 + math.floor(love.math.random()* (1024-192*2))
+    local b = { x = x, y = -192, vy = 0.1, name = "bossBall", img = bossBall.img}
+
+    world:add(b, b.x, b.y, 192, 192)
+
+    function b:update(dt)
+        self.vy = self.vy + 5 * dt;
+        local goalY = self.y + self.vy;
+        self.x, self.y, collisions = world:move(self, self.x, goalY, self.filter)
+
+    end
+
+    function b:draw()
+        love.graphics.draw(self.img, self.x, self.y)
+    end
+
+    function b:filter(other)
+
+        if other.name == "player" then
+            self.remove = true
+            return "touch"
+        end
+        
+        return nil;
+    end
+
+    return b;
+end
+
+bossBullet = {
+    img = love.graphics.newImage("bShot.png")
+};
+bossBullet.__index = bossBullet
 
 function bossBullet:create(x, y, px, py)
     local vx = (px-x)/100
     local vy = (py-y)/100
     
-    local b = { x = x, y = y, vx = vx, vy = vy, name = "bossBullet"}
+    local b = { x = x, y = y, vx = vx, vy = vy, name = "bossBullet", img = bossBullet.img}
     world:add(b, b.x, b.y, 8, 8)
     
     function b:update()
@@ -178,7 +221,7 @@ function bossBullet:create(x, y, px, py)
     end
 
     function b:draw()
-        love.graphics.rectangle('fill', world:getRect(self))
+        love.graphics.draw(self.img, self.x, self.y)
     end
 
     function b:filter(other)
