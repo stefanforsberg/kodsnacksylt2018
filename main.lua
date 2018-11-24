@@ -41,10 +41,12 @@ function love.update(dt)
         player:update(dt)
         things:update(dt)
         enemies:update(dt);
-    elseif gameState == "death" then
+    elseif gameState == "death" or gameState == "victory" then
         function love.keypressed(key)
-            gameState = "game"
-            love.load()
+            if key == "return" then
+                gameState = "game"  
+                love.load()
+            end
         end        
     end
 end
@@ -63,15 +65,20 @@ function love.draw()
         things:draw()
 
         if player.health <= 0 then
-            print("death")
             gameState = "death"
+        end
+
+        if boss.health <= 0 then
+            gameState = "victory"
         end
 
         love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 30)
 
     elseif gameState == "death" then
-        love.graphics.print("death")
-    end 
+        love.graphics.print("Death. Press enter key to try again", 300, 300)
+    elseif gameState == "victory" then
+        love.graphics.print("Victory. Press enter key to try again", 300, 300)
+    end     
 end
 
 function outline(x, y, w, h)

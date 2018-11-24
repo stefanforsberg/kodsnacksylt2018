@@ -23,7 +23,7 @@ function boss:init()
             shootThreashold = 3,
             ballThreashold = 4,
             flameProbability = 0.1,
-            ballProbability = 1,
+            ballProbability = 0.3,
             hitDamage = 1,
             enemyHealth = 1,
             enemyThreashold = 5,
