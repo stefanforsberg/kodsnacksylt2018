@@ -17,6 +17,7 @@ function boss:init()
     self.shootThreashold = 2
     self.phace = {
         one = {
+            name = "one",
             shootThreashold = 2,
             flameProbability = 1
         }
@@ -105,7 +106,7 @@ function bossFlame:create(x, y)
         
         if self.timer == 100 then
             self.added = true
-            world:add(f, f.x, f.y, 933, 213)
+            world:add(f, f.x, f.y, 933, 178)
         end
 
         if not self.added then
@@ -137,10 +138,12 @@ function bossFlame:create(x, y)
 
     function f:draw()
         if self.added then
-            love.graphics.draw(self.animation.img, self.x, self.y)
+            love.graphics.rectangle('fill', world:getRect(self))
+            love.graphics.draw(self.animation.img, self.x, self.y-20)
+            
         else
             love.graphics.setColor(0,0,0, self.timer / 100)
-            love.graphics.draw(self.img1, self.x, self.y)
+            love.graphics.draw(self.img1, self.x, self.y-20)
             love.graphics.setColor(255,255,255,1)
         end
     end
